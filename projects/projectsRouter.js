@@ -69,6 +69,24 @@ router.get('/tasks', (req, res) => {
         })
 })
 
+router.get('/projects/:id/tasks', (req, res) => {
+    let outarr = []
+    Projects.getIdTask(req.params.id)
+        .then(tasks => {
+            tasks.map(task => {
+                if (task.taskCompleted === 0 || task.taskCompleted === null) {
+                    outarr.push({ ...task, taskCompleted: false });
+                } else {
+                    outarr.push({ ...task, taskCompleted: true });
+                }
+            })
+            res.status(200).json(outarr);
+        })
+        .catch(err => {
+            res.status(500).json(err);
+        })
+})
+
 router.post('/projects/:id/tasks', (req, res) => {
     Projects.addTask({...req.body, projectId: req.params.id})
         .then(task => {
@@ -82,6 +100,24 @@ router.post('/projects/:id/tasks', (req, res) => {
 router.get('/projectResources', (req, res) => {
     let outarr = [];
     Projects.getProjectResources()
+        .then(prs => {
+            prs.map(pr => {
+                if (pr.completed === 0 || pr.completed === null) {
+                    outarr.push({ ...pr, completed: false });
+                } else {
+                    outarr.push({ ...pr, completed: true });
+                }
+            })
+            res.status(200).json(outarr);
+        })
+        .catch(err => {
+            res.status(500).json(err);
+        })
+})
+
+router.get('/resources/:id/projects', (req, res) => {
+    let outarr = [];
+    Projects.getResourceProjects(req.params.id)
         .then(prs => {
             prs.map(pr => {
                 if (pr.completed === 0 || pr.completed === null) {
